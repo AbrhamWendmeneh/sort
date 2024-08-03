@@ -1,66 +1,50 @@
-import numpy as np
-from sklearn.metrics import confusion_matrix
+# import numpy as np
+# from sklearn.metrics import confusion_matrix
 
-def calculate_mota(fp, fn, ids, gt_count):
-    return 1 - (fp + fn + ids) / gt_count if gt_count != 0 else float('inf')
+# def calculate_mota(fp, fn, ids, gt_count):
+#     return 1 - (fp + fn + ids) / gt_count if gt_count != 0 else float('inf')
 
-def calculate_motp(iou_sum, match_count):
-    return iou_sum / match_count if match_count != 0 else 0
+# def calculate_motp(iou_sum, match_count):
+#     return iou_sum / match_count if match_count != 0 else 0
 
-def calculate_id_switches(gt_ids, tracker_ids):
-    ids = 0
-    id_map = {}
-    for gt_id, tracker_id in zip(gt_ids, tracker_ids):
-        if gt_id in id_map:
-            if id_map[gt_id] != tracker_id:
-                ids += 1
-        id_map[gt_id] = tracker_id
-    return ids
+# def calculate_id_switches(gt_ids, tracker_ids):
+#     ids = 0
+#     id_map = {}
+#     for gt_id, tracker_id in zip(gt_ids, tracker_ids):
+#         if gt_id in id_map:
+#             if id_map[gt_id] != tracker_id:
+#                 ids += 1
+#         id_map[gt_id] = tracker_id
+#     return ids
 
-def evaluate_tracking(ground_truth, tracker_output):
-    gt_ids = ground_truth[:, 4]
-    tracker_ids = tracker_output[:, 4]
+# def evaluate_tracking(ground_truth, tracker_output):
+#     gt_ids = ground_truth[:, 4]
+#     tracker_ids = tracker_output[:, 4]
     
-    # Calculate IoUs and matches
-    ious = np.array([calculate_iou(gt, tr)[0] for gt, tr in zip(ground_truth, tracker_output)])
-    matches = ious > 0.5
+#     # Calculate IoUs and matches
+#     ious = np.array([calculate_iou(gt, tr)[0] for gt, tr in zip(ground_truth, tracker_output)])
+#     matches = ious > 0.5
     
-    # Calculate FP and FN
-    fp = len(tracker_ids) - np.sum(matches)
-    fn = len(gt_ids) - np.sum(matches)
+#     # Calculate FP and FN
+#     fp = len(tracker_ids) - np.sum(matches)
+#     fn = len(gt_ids) - np.sum(matches)
     
-    # Calculate ID switches
-    ids = calculate_id_switches(gt_ids, tracker_ids)
+#     # Calculate ID switches
+#     ids = calculate_id_switches(gt_ids, tracker_ids)
     
-    # Calculate MOTA and MOTP
-    mota = calculate_mota(fp, fn, ids, len(ground_truth))
-    motp = calculate_motp(np.sum(ious[matches]), np.sum(matches))
+#     # Calculate MOTA and MOTP
+#     mota = calculate_mota(fp, fn, ids, len(ground_truth))
+#     motp = calculate_motp(np.sum(ious[matches]), np.sum(matches))
     
-    # Calculate MT and ML
-    mt = np.sum(matches) / len(ground_truth)
-    ml = np.sum(~matches) / len(ground_truth)
+#     # Calculate MT and ML
+#     mt = np.sum(matches) / len(ground_truth)
+#     ml = np.sum(~matches) / len(ground_truth)
     
-    return mota, motp, ids, mt, ml, fp, fn
-
-def calculate_iou(box1, box2):
-    x1, y1, x2, y2 = box1[:4]
-    x1_, y1_, x2_, y2_ = box2[:4]
-
-    xi1, yi1 = max(x1, x1_), max(y1, y1_)
-    xi2, yi2 = min(x2, x2_), min(y2, y2_)
-
-    inter_area = max(0, xi2 - xi1) * max(0, yi2 - yi1)
-    box1_area = (x2 - x1) * (y2 - y1)
-    box2_area = (x2_ - x1_) * (y2_ - y1_)
-
-    union_area = box1_area + box2_area - inter_area
-
-    iou = inter_area / union_area if union_area != 0 else 0
-    return iou, inter_area, union_area  # Ensure it returns a tuple
+#     return mota, motp, ids, mt, ml, fp, fn
 
 # def calculate_iou(box1, box2):
-#     x1, y1, x2, y2 = map(int, box1[:4])
-#     x1_, y1_, x2_, y2_ = map(int, box2[:4])
+#     x1, y1, x2, y2 = box1[:4]
+#     x1_, y1_, x2_, y2_ = box2[:4]
 
 #     xi1, yi1 = max(x1, x1_), max(y1, y1_)
 #     xi2, yi2 = min(x2, x2_), min(y2, y2_)
@@ -72,39 +56,55 @@ def calculate_iou(box1, box2):
 #     union_area = box1_area + box2_area - inter_area
 
 #     iou = inter_area / union_area if union_area != 0 else 0
-#     return iou, inter_area, union_area
+#     return iou, inter_area, union_area  # Ensure it returns a tuple
 
-def evaluate_tracking_ds(ground_truth, tracker_output):
-    gt_ids = ground_truth[:, 4]
-    tracker_ids = tracker_output[:, 4]
+# # def calculate_iou(box1, box2):
+# #     x1, y1, x2, y2 = map(int, box1[:4])
+# #     x1_, y1_, x2_, y2_ = map(int, box2[:4])
+
+# #     xi1, yi1 = max(x1, x1_), max(y1, y1_)
+# #     xi2, yi2 = min(x2, x2_), min(y2, y2_)
+
+# #     inter_area = max(0, xi2 - xi1) * max(0, yi2 - yi1)
+# #     box1_area = (x2 - x1) * (y2 - y1)
+# #     box2_area = (x2_ - x1_) * (y2_ - y1_)
+
+# #     union_area = box1_area + box2_area - inter_area
+
+# #     iou = inter_area / union_area if union_area != 0 else 0
+# #     return iou, inter_area, union_area
+
+# def evaluate_tracking_ds(ground_truth, tracker_output):
+#     gt_ids = ground_truth[:, 4]
+#     tracker_ids = tracker_output[:, 4]
     
-    # Ensure both arrays have the same length for comparison
-    min_length = min(len(gt_ids), len(tracker_ids))
-    gt_ids = gt_ids[:min_length]
-    tracker_ids = tracker_ids[:min_length]
-    ground_truth = ground_truth[:min_length]
-    tracker_output = tracker_output[:min_length]
+#     # Ensure both arrays have the same length for comparison
+#     min_length = min(len(gt_ids), len(tracker_ids))
+#     gt_ids = gt_ids[:min_length]
+#     tracker_ids = tracker_ids[:min_length]
+#     ground_truth = ground_truth[:min_length]
+#     tracker_output = tracker_output[:min_length]
     
-    # Calculate IoUs and matches
-    ious = np.array([calculate_iou(gt, tr)[0] for gt, tr in zip(ground_truth, tracker_output)])
-    matches = ious > 0.5
+#     # Calculate IoUs and matches
+#     ious = np.array([calculate_iou(gt, tr)[0] for gt, tr in zip(ground_truth, tracker_output)])
+#     matches = ious > 0.5
     
-    # Calculate FP and FN
-    fp = len(tracker_ids) - np.sum(matches)
-    fn = len(gt_ids) - np.sum(matches)
+#     # Calculate FP and FN
+#     fp = len(tracker_ids) - np.sum(matches)
+#     fn = len(gt_ids) - np.sum(matches)
     
-    # Calculate ID switches
-    ids = calculate_id_switches(gt_ids, tracker_ids)
+#     # Calculate ID switches
+#     ids = calculate_id_switches(gt_ids, tracker_ids)
     
-    # Calculate MOTA and MOTP
-    mota = calculate_mota(fp, fn, ids, len(ground_truth))
-    motp = calculate_motp(np.sum(ious[matches]), np.sum(matches))
+#     # Calculate MOTA and MOTP
+#     mota = calculate_mota(fp, fn, ids, len(ground_truth))
+#     motp = calculate_motp(np.sum(ious[matches]), np.sum(matches))
     
-    # Calculate MT and ML
-    mt = np.sum(matches) / len(ground_truth)
-    ml = np.sum(~matches) / len(ground_truth)
+#     # Calculate MT and ML
+#     mt = np.sum(matches) / len(ground_truth)
+#     ml = np.sum(~matches) / len(ground_truth)
     
-    return mota, motp, ids, mt, ml, fp, fn
+#     return mota, motp, ids, mt, ml, fp, fn
 
 from sort import *
 import cv2
@@ -187,6 +187,13 @@ all_tracker_outputs = np.vstack(all_tracker_outputs)
 
 mota, motp, ids, mt, ml, fp, fn = evaluate_tracking(all_ground_truths, all_tracker_outputs)
 print(f"MOTA: {mota}, MOTP: {motp}, ID Switches: {ids}, Mostly Tracked: {mt}, Mostly Lost: {ml}, False Positives: {fp}, False Negatives: {fn}")
+
+
+
+
+
+###################################################
+
 import cv2
 import random
 from deep_sort_realtime.deepsort_tracker import DeepSort
